@@ -1,0 +1,84 @@
+name: Monitoring
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  DO_NOT_TRACK: "1"
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt nbconvert
+
+      - name: Run the notebook
+        run: jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=1200 --output-dir executed evidently_monitoring.ipynb
+
+      - name: Check that each scenario raises the expected alerts
+        run: |
+          python - <<'EOF'
+          import json
+          months = json.load(open("results/metrics.json"))["months"]
+          for month, m in months.items():
+              clean = m["scenario"] in ("normal", "recovered")
+              print(f"{month} {m['scenario']:<18} alerts: {m['alerts']}")
+              assert (not m["alerts"]) == clean, f"{month}: unexpected alert result"
+          assert "roc_auc" in months["2006-02"]["alerts"], "pipeline bug should hurt AUC"
+          assert months["2006-01"]["alerts_without_outcomes"] != "none", "downturn should alert before outcomes"
+          EOF
+
+      - name: Gate on the latest month
+        run: python monitoring.py prediction_logs/2006-03.csv --report reports/gate_2006-03.html
+
+      - name: The gate fails on the pipeline bug month
+        run: |
+          if python monitoring.py prediction_logs/2006-02.csv --report reports/gate_2006-02.html; then
+            echo "expected the gate to fail on 2006-02"
+            exit 1
+          fi
+
+      - name: Upload reports, workspace and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitoring-results
+          path: |
+            results/
+            reports/
+            workspace/
+            executed/
+
+      - name: Job summary
+        run: |
+          python - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          m = json.load(open("results/metrics.json"))
+          print("## Monthly monitoring\n")
+          print("| Month | Scenario | Drifted features | Prediction drift | Missing | ROC AUC | Default rate | Alerts |")
+          print("|---|---|---|---|---|---|---|---|")
+          for month, r in m["months"].items():
+              alerts = ", ".join(r["alerts"]) or "none"
+              print(f"| {month} | {r['scenario']} | {r['drifted_features']} | {r['prediction_drift']} | {r['missing_values']} | {r['roc_auc']} | {r['default_rate']} | {alerts} |")
+          print("\nHTML reports for every month are in the `monitoring-results` artifact.\n")
+          print("## results/metrics.json\n")
+          print("```json")
+          print(json.dumps(m, indent=2))
+          print("```")
+          EOF

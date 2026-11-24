@@ -1,0 +1,206 @@
+{
+  "model": {
+    "params_from_mlflow_lab": {
+      "max_depth": 7,
+      "learning_rate": 0.0154,
+      "min_child_weight": 8.3996,
+      "subsample": 0.5437,
+      "colsample_bytree": 0.5281,
+      "reg_alpha": 0.4187,
+      "reg_lambda": 0.3773
+    },
+    "boosting_rounds": 346,
+    "validation_auc": 0.7781,
+    "held_out_auc": 0.7835
+  },
+  "reference": {
+    "rows": 6000,
+    "default_rate": 0.2212
+  },
+  "thresholds": {
+    "drifted_feature_share": 0.25,
+    "prediction_drift": 0.1,
+    "missing_values": 0,
+    "roc_auc": 0.75,
+    "default_rate": 0.3
+  },
+  "months": {
+    "2005-10": {
+      "scenario": "normal",
+      "rows": 1000,
+      "mean_prediction": 0.2321,
+      "drifted_features": 0,
+      "drifted_feature_share": 0.0,
+      "prediction_drift": 0.0582,
+      "missing_values": 0,
+      "roc_auc": 0.8007,
+      "default_rate": 0.234,
+      "checks": {
+        "drifted_feature_share": "pass",
+        "prediction_drift": "pass",
+        "missing_values": "pass",
+        "roc_auc": "pass",
+        "default_rate": "pass"
+      },
+      "alerts": [],
+      "drifted_columns": [],
+      "alerts_without_outcomes": "none"
+    },
+    "2005-11": {
+      "scenario": "normal",
+      "rows": 1000,
+      "mean_prediction": 0.2109,
+      "drifted_features": 0,
+      "drifted_feature_share": 0.0,
+      "prediction_drift": 0.0623,
+      "missing_values": 0,
+      "roc_auc": 0.7722,
+      "default_rate": 0.203,
+      "checks": {
+        "drifted_feature_share": "pass",
+        "prediction_drift": "pass",
+        "missing_values": "pass",
+        "roc_auc": "pass",
+        "default_rate": "pass"
+      },
+      "alerts": [],
+      "drifted_columns": [],
+      "alerts_without_outcomes": "none"
+    },
+    "2005-12": {
+      "scenario": "new young segment",
+      "rows": 1000,
+      "mean_prediction": 0.2461,
+      "drifted_features": 10,
+      "drifted_feature_share": 0.4348,
+      "prediction_drift": 0.1277,
+      "missing_values": 0,
+      "roc_auc": 0.7781,
+      "default_rate": 0.243,
+      "checks": {
+        "drifted_feature_share": "fail",
+        "prediction_drift": "fail",
+        "missing_values": "pass",
+        "roc_auc": "pass",
+        "default_rate": "pass"
+      },
+      "alerts": [
+        "drifted_feature_share",
+        "prediction_drift"
+      ],
+      "drifted_columns": [
+        "limit_bal",
+        "age",
+        "bill_amt1",
+        "bill_amt2",
+        "bill_amt3",
+        "bill_amt4",
+        "bill_amt5",
+        "bill_amt6",
+        "pay_amt6",
+        "marriage"
+      ],
+      "alerts_without_outcomes": "drifted_feature_share, prediction_drift"
+    },
+    "2006-01": {
+      "scenario": "downturn",
+      "rows": 1000,
+      "mean_prediction": 0.3472,
+      "drifted_features": 5,
+      "drifted_feature_share": 0.2174,
+      "prediction_drift": 0.6438,
+      "missing_values": 0,
+      "roc_auc": 0.8145,
+      "default_rate": 0.35,
+      "checks": {
+        "drifted_feature_share": "pass",
+        "prediction_drift": "fail",
+        "missing_values": "pass",
+        "roc_auc": "pass",
+        "default_rate": "fail"
+      },
+      "alerts": [
+        "prediction_drift",
+        "default_rate"
+      ],
+      "drifted_columns": [
+        "limit_bal",
+        "pay_1",
+        "pay_2",
+        "pay_3",
+        "pay_4"
+      ],
+      "alerts_without_outcomes": "prediction_drift"
+    },
+    "2006-02": {
+      "scenario": "pipeline bug",
+      "rows": 1000,
+      "mean_prediction": 0.3056,
+      "drifted_features": 12,
+      "drifted_feature_share": 0.5217,
+      "prediction_drift": 0.5858,
+      "missing_values": 100,
+      "roc_auc": 0.733,
+      "default_rate": 0.23,
+      "checks": {
+        "drifted_feature_share": "fail",
+        "prediction_drift": "fail",
+        "missing_values": "fail",
+        "roc_auc": "fail",
+        "default_rate": "pass"
+      },
+      "alerts": [
+        "drifted_feature_share",
+        "prediction_drift",
+        "missing_values",
+        "roc_auc"
+      ],
+      "drifted_columns": [
+        "bill_amt1",
+        "bill_amt2",
+        "bill_amt3",
+        "bill_amt4",
+        "bill_amt5",
+        "bill_amt6",
+        "pay_amt1",
+        "pay_amt2",
+        "pay_amt3",
+        "pay_amt4",
+        "pay_amt5",
+        "pay_amt6"
+      ],
+      "alerts_without_outcomes": "drifted_feature_share, prediction_drift, missing_values"
+    },
+    "2006-03": {
+      "scenario": "recovered",
+      "rows": 1000,
+      "mean_prediction": 0.2228,
+      "drifted_features": 0,
+      "drifted_feature_share": 0.0,
+      "prediction_drift": 0.0169,
+      "missing_values": 0,
+      "roc_auc": 0.7837,
+      "default_rate": 0.242,
+      "checks": {
+        "drifted_feature_share": "pass",
+        "prediction_drift": "pass",
+        "missing_values": "pass",
+        "roc_auc": "pass",
+        "default_rate": "pass"
+      },
+      "alerts": [],
+      "drifted_columns": [],
+      "alerts_without_outcomes": "none"
+    }
+  },
+  "cli_exit_codes": {
+    "2005-11": 0,
+    "2006-02": 1,
+    "2006-01 no labels": 1
+  },
+  "versions": {
+    "evidently": "0.7.23",
+    "xgboost": "3.4.1",
+    "pandas": "2.3.3"
+  }
+}
